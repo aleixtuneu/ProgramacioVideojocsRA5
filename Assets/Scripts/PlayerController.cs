@@ -1,12 +1,18 @@
+using System.Runtime.CompilerServices;
+using System.Xml;
+using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
-[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(MoveBehaviour))]
+[RequireComponent(typeof(JumpBehaviour))]
 
 public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerActions
 {
     [SerializeField] protected MoveBehaviour _mb;
+    [SerializeField] protected JumpBehaviour _jb;
     [SerializeField] protected Animator _animator;
 
     private InputSystem_Actions _inputActions;
@@ -14,6 +20,7 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     public void Awake()
     {
         _mb = GetComponent<MoveBehaviour>();
+        _jb = GetComponent<JumpBehaviour>();
         _animator = GetComponent<Animator>();
         _inputActions = new InputSystem_Actions();
         _inputActions.Player.SetCallbacks(this);
@@ -29,6 +36,7 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
         _inputActions.Player.Disable();
     }
 
+    // Moviment
     public void OnMove(InputAction.CallbackContext context)
     {
         Vector2 moveInput = context.ReadValue<Vector2>();
@@ -38,6 +46,20 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
         if (_animator != null)
         {
             _animator.SetBool("IsWalking", isMoving);
+        }
+    }
+
+    // Salt
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            _jb.Jump();
+
+            if (_animator != null && _jb.IsGrounded())
+            {
+                _animator.SetTrigger("Jump");
+            }
         }
     }
 }
