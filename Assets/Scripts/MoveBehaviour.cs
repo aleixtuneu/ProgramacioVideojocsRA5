@@ -11,6 +11,8 @@ public class MoveBehaviour : MonoBehaviour
     private Vector2 _inputDirection;
     private Transform _cameraTransform;
 
+    private bool _isAiming;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -31,6 +33,11 @@ public class MoveBehaviour : MonoBehaviour
         Move();
     }
 
+    public void SetAiming(bool aiming)
+    {
+        _isAiming = aiming;
+    }
+
     private void Move()
     {
         // Obtenir dirrecions de la càmera
@@ -46,14 +53,22 @@ public class MoveBehaviour : MonoBehaviour
         // Calcular direcció de moviment
         Vector3 moveDir = (camForward * _inputDirection.y + camRight * _inputDirection.x).normalized;
 
+        // Si apunta, el personatge sempre mira on la càmera
+        if (_isAiming)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(camForward);
+            _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
+        }
+
         if (moveDir.sqrMagnitude >= 0.01f)
         {
-            // Rotació
-            float targetAngle = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
-            _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
+            // Si no apunta rotació normal
+            if (!_isAiming)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+                _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
+            }
 
-            // Moviment
             Vector3 targetVelocity = moveDir * speed;
             _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
         }

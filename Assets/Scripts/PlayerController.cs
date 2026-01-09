@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     [SerializeField] protected JumpBehaviour _jb;
     [SerializeField] protected Animator _animator;
 
+    [SerializeField] private GameObject _thirdPersonCamera;
+    [SerializeField] protected GameObject _firstPersonCamera;
+    private bool _isAiming;
+
     private InputSystem_Actions _inputActions;
 
     private float _groundCheckTimer = 0f;   // Temporitzador per la animació de salt
@@ -87,5 +91,22 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
 
             _jb.DelayJump(0.3f);
         }
+    }
+
+    // Apuntar
+    public void OnAim(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            _isAiming = true;
+            _firstPersonCamera.GetComponent<CinemachineCamera>().Priority = 20;
+        }
+        else if (context.canceled)
+        {
+            _isAiming = false;
+            _firstPersonCamera.GetComponent<CinemachineCamera>().Priority = 5;
+        }
+
+        _mb.SetAiming(_isAiming);
     }
 }
