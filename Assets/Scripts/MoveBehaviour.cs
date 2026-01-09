@@ -5,7 +5,7 @@ using UnityEngine;
 public class MoveBehaviour : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
-    [SerializeField] private float turnSpeed = 0.5f;
+    [SerializeField] private float turnSpeed = 15f;
 
     private Rigidbody _rb;
     private Vector2 _inputDirection;
@@ -15,7 +15,10 @@ public class MoveBehaviour : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
 
-        _cameraTransform = Camera.main.transform;
+        if (Camera.main != null)
+        {
+            _cameraTransform = Camera.main.transform;
+        }
     }
 
     public void SetInputDirection(Vector2 direction)
@@ -30,7 +33,7 @@ public class MoveBehaviour : MonoBehaviour
 
     private void Move()
     {
-        // Obtenir dirreció de la càmera
+        // Obtenir dirrecions de la càmera
         Vector3 camForward = _cameraTransform.forward;
         Vector3 camRight = _cameraTransform.right;
 
@@ -45,28 +48,19 @@ public class MoveBehaviour : MonoBehaviour
 
         if (moveDir.sqrMagnitude >= 0.01f)
         {
-            // --- ROTACIÓN SUAVE ---
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-            Quaternion nextRotation = Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime);
-            _rb.MoveRotation(nextRotation);
+            // Rotació
+            float targetAngle = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
+            _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
 
-            // --- MOVIMIENTO ---
+            // Moviment
             Vector3 targetVelocity = moveDir * speed;
-
-            // Aplicar al Rigidbody (manteniendo la gravedad en Y)
-            // Nota: Si usas Unity 6, cambia 'velocity' por 'linearVelocity'
             _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
         }
         else
         {
-            // Si no tocamos teclas, frenamos el movimiento horizontal pero dejamos caer la gravedad
+            // Si no hi ha input, el personatge es manté en la seva rotació
             _rb.linearVelocity = new Vector3(0f, _rb.linearVelocity.y, 0f);
         }
-
-        /*
-        Vector3 moveDirection = transform.right * _inputDirection.x + transform.forward * _inputDirection.y;
-        Vector3 Velocity = moveDirection * speed;
-        _rb.linearVelocity = new Vector3(Velocity.x, _rb.linearVelocity.y, Velocity.z);
-        */
     }
 }
