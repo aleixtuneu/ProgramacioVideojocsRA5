@@ -36,6 +36,12 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
         _inputActions.Player.Disable();
     }
 
+    // Càmera
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        //
+    }
+
     // Moviment
     public void OnMove(InputAction.CallbackContext context)
     {

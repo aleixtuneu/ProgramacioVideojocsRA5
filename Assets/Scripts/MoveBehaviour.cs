@@ -5,7 +5,7 @@ using UnityEngine;
 public class MoveBehaviour : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
-    [SerializeField] private float turnSpeed = 0.5f;
+    [SerializeField] private float turnSpeed = 15f;
 
     private Rigidbody _rb;
     private Vector2 _inputDirection;
@@ -14,7 +14,11 @@ public class MoveBehaviour : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        _cameraTransform = Camera.main.transform;
+
+        if (Camera.main != null)
+        {
+            _cameraTransform = Camera.main.transform;
+        }
     }
 
     public void SetInputDirection(Vector2 direction)
@@ -46,8 +50,8 @@ public class MoveBehaviour : MonoBehaviour
         {
             // Rotació suau
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-            Quaternion nextRotation = Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime);
-            _rb.MoveRotation(nextRotation);
+            //Quaternion nextRotation = Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime);
+            _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
 
             // Moviment
             Vector3 targetVelocity = moveDir * speed;
