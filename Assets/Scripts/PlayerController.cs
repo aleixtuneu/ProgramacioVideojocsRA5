@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
 
     private InputSystem_Actions _inputActions;
 
+    private float _groundCheckTimer = 0f;   // Temporitzador per la animació de salt
+
     public void Awake()
     {
         _mb = GetComponent<MoveBehaviour>();
@@ -34,6 +36,23 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     private void OnDisable()
     {
         _inputActions.Player.Disable();
+    }
+
+    private void Update()
+    {
+        if (_animator != null)
+        {
+            if (_groundCheckTimer > 0)
+            {
+                _groundCheckTimer -= Time.deltaTime;
+                _animator.SetBool("IsGrounded", false);
+            }
+            else
+            {
+                // Si el temporitzador ha acabat
+                _animator.SetBool("IsGrounded", _jb.IsGrounded());
+            }
+        }
     }
 
     // Càmera
@@ -58,14 +77,15 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     // Salt
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && _jb.IsGrounded())
         {
-            _jb.Jump();
-
             if (_animator != null && _jb.IsGrounded())
             {
                 _animator.SetTrigger("Jump");
             }
+            _groundCheckTimer = 0.5f;    // 0.3s de espera + 0.2s per despegar del terra
+
+            _jb.DelayJump(0.3f);
         }
     }
 }

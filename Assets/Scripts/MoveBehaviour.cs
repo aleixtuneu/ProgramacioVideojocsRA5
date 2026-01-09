@@ -48,19 +48,18 @@ public class MoveBehaviour : MonoBehaviour
 
         if (moveDir.sqrMagnitude >= 0.01f)
         {
-            // Rotació suau
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-            //Quaternion nextRotation = Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime);
+            // Rotació
+            float targetAngle = Mathf.Atan2(moveDir.x, moveDir.z) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0, targetAngle, 0);
             _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
 
             // Moviment
             Vector3 targetVelocity = moveDir * speed;
-
             _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
         }
         else
         {
-            // Moviment si es pressionen tecles de moviment
+            // Si no hi ha input, el personatge es manté en la seva rotació
             _rb.linearVelocity = new Vector3(0f, _rb.linearVelocity.y, 0f);
         }
     }

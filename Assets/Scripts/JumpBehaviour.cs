@@ -14,6 +14,7 @@ public class JumpBehaviour : MonoBehaviour
 
     private Rigidbody _rb;
     private bool _isGrounded;
+    private bool _isJumping = false;
 
     private void Awake()
     {
@@ -45,11 +46,17 @@ public class JumpBehaviour : MonoBehaviour
     // Saltar
     public void Jump()
     {
-        if (_isGrounded)
+        Vector3 currentVel = _rb.linearVelocity;
+        _rb.linearVelocity = new Vector3(currentVel.x, 0f, currentVel.z);
+        _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+    }
+
+    // Delay de salt
+    public void DelayJump(float delay)
+    {
+        if (_isGrounded && !IsInvoking(nameof(Jump)))
         {
-            Vector3 currentVel = _rb.linearVelocity;
-            _rb.linearVelocity = new Vector3(currentVel.x, 0f, currentVel.z);
-            _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            Invoke(nameof(Jump), delay);
         }
     }
 
