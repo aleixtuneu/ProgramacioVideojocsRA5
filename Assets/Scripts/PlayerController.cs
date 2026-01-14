@@ -98,6 +98,9 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     {
         if (context.performed)
         {
+            //
+            SyncCameras(); // Sincornitzar càmeres abans de fer el canvi
+            //
             _isAiming = true;
             _firstPersonCamera.GetComponent<CinemachineCamera>().Priority = 20;
         }
@@ -108,5 +111,20 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
         }
 
         _mb.SetAiming(_isAiming);
+    }
+
+    // Sincronitzar càmeres
+    public void SyncCameras()
+    {
+        // Obtenir components de PanTilt
+        var panTilt3P = _thirdPersonCamera.GetComponent<CinemachinePanTilt>();
+        var panTilt1P = _firstPersonCamera.GetComponent<CinemachinePanTilt>();
+
+        if (panTilt3P != null && panTilt1P != null)
+        {
+            // Copiar valors perquè comencin des del mateix punt
+            panTilt1P.PanAxis.Value = panTilt3P.PanAxis.Value;
+            panTilt1P.TiltAxis.Value = panTilt3P.TiltAxis.Value;
+        }
     }
 }
