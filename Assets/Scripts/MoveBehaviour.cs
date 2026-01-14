@@ -1,16 +1,18 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 
 public class MoveBehaviour : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float runSpeed = 9f;
     [SerializeField] private float turnSpeed = 15f;
 
     private Rigidbody _rb;
     private Vector2 _inputDirection;
     private Transform _cameraTransform;
-
+    private bool _isSprinting;
     private bool _isAiming;
 
     private void Awake()
@@ -22,6 +24,9 @@ public class MoveBehaviour : MonoBehaviour
             _cameraTransform = Camera.main.transform;
         }
     }
+
+    // Obtenir direcció de moviment
+    public Vector2 GetInputDirection() => _inputDirection;
 
     public void SetInputDirection(Vector2 direction)
     {
@@ -36,6 +41,11 @@ public class MoveBehaviour : MonoBehaviour
     public void SetAiming(bool aiming)
     {
         _isAiming = aiming;
+    }
+
+    public void SetSprinting(bool sprinting)
+    {
+        _isSprinting = sprinting;
     }
 
     private void Move()
@@ -53,6 +63,9 @@ public class MoveBehaviour : MonoBehaviour
         // Calcular direcció de moviment
         Vector3 moveDir = (camForward * _inputDirection.y + camRight * _inputDirection.x).normalized;
 
+        // Determinar si camina o corre
+        float currentSpeed = (_isSprinting) ? runSpeed : walkSpeed;
+
         // Si apunta, el personatge sempre mira on la càmera
         if (_isAiming)
         {
@@ -69,7 +82,7 @@ public class MoveBehaviour : MonoBehaviour
                 _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
             }
 
-            Vector3 targetVelocity = moveDir * speed;
+            Vector3 targetVelocity = moveDir * currentSpeed;
             _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
         }
         else

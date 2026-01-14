@@ -127,4 +127,30 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
             panTilt1P.TiltAxis.Value = panTilt3P.TiltAxis.Value;
         }
     }
+
+    // Córrer
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        if (context.started || context.performed)
+        {
+            _mb.SetSprinting(true);
+            UpdateSprintAnimation(true);
+        }
+        else if (context.canceled)
+        {
+            _mb.SetSprinting(false);
+            UpdateSprintAnimation(false);
+        }
+    }
+
+    // Actualitzar animació de córrer
+    private void UpdateSprintAnimation(bool sprinting)
+    {
+        if (_animator != null)
+        {
+            // No aplicar si no hi ha moviment
+            bool canRun = sprinting && _mb.GetInputDirection().sqrMagnitude > 0.1f;
+            _animator.SetBool("IsRunning", canRun);
+        }
+    }
 }
