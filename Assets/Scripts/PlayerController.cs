@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
         if (context.performed)
         {
             //
-            SyncCameras(); // Sincornitzar càmeres abans de fer el canvi
+            SyncCameras(); // Sincronitzar càmeres abans de fer el canvi
             //
             _isAiming = true;
             _firstPersonCamera.GetComponent<CinemachineCamera>().Priority = 20;
