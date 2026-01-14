@@ -15,6 +15,10 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     [SerializeField] protected JumpBehaviour _jb;
     [SerializeField] protected Animator _animator;
 
+    [SerializeField] private GameObject _thirdPersonCamera;
+    [SerializeField] protected GameObject _firstPersonCamera;
+    private bool _isAiming;
+
     private InputSystem_Actions _inputActions;
 
     private float _groundCheckTimer = 0f;   // Temporitzador per la animació de salt
@@ -86,6 +90,41 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
             _groundCheckTimer = 0.5f;    // 0.3s de espera + 0.2s per despegar del terra
 
             _jb.DelayJump(0.3f);
+        }
+    }
+
+    // Apuntar
+    public void OnAim(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            //
+            SyncCameras(); // Sincornitzar càmeres abans de fer el canvi
+            //
+            _isAiming = true;
+            _firstPersonCamera.GetComponent<CinemachineCamera>().Priority = 20;
+        }
+        else if (context.canceled)
+        {
+            _isAiming = false;
+            _firstPersonCamera.GetComponent<CinemachineCamera>().Priority = 5;
+        }
+
+        _mb.SetAiming(_isAiming);
+    }
+
+    // Sincronitzar càmeres
+    public void SyncCameras()
+    {
+        // Obtenir components de PanTilt
+        var panTilt3P = _thirdPersonCamera.GetComponent<CinemachinePanTilt>();
+        var panTilt1P = _firstPersonCamera.GetComponent<CinemachinePanTilt>();
+
+        if (panTilt3P != null && panTilt1P != null)
+        {
+            // Copiar valors perquè comencin des del mateix punt
+            panTilt1P.PanAxis.Value = panTilt3P.PanAxis.Value;
+            panTilt1P.TiltAxis.Value = panTilt3P.TiltAxis.Value;
         }
     }
 }
