@@ -63,8 +63,8 @@ public class MoveBehaviour : MonoBehaviour
         // Calcular direcció de moviment
         Vector3 moveDir = (camForward * _inputDirection.y + camRight * _inputDirection.x).normalized;
 
-        // Determinar si camina o corre
-        float currentSpeed = (_isSprinting) ? runSpeed : walkSpeed;
+        // Determinar si camina o corre, si apunta només pot caminar
+        float currentSpeed = (_isSprinting && !_isAiming) ? runSpeed : walkSpeed;
 
         // Si apunta, el personatge sempre mira on la càmera
         if (_isAiming)
