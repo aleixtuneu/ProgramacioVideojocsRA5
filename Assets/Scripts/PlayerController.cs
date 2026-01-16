@@ -75,6 +75,12 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
         if (_animator != null)
         {
             _animator.SetBool("IsWalking", isMoving);
+
+            // Si deixa de moure's, no pot córrer
+            if (moveInput.sqrMagnitude <= 0.1f)
+            {
+                _animator.SetBool("IsRunning", false);
+            }
         }
     }
 
@@ -148,7 +154,7 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     {
         if (_animator != null)
         {
-            // No aplicar si no hi ha moviment
+            // Nomes corre si hi ha moviment i no apunta
             bool canRun = sprinting && _mb.GetInputDirection().sqrMagnitude > 0.1f;
             _animator.SetBool("IsRunning", canRun);
         }
