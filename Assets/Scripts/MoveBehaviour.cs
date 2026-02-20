@@ -83,11 +83,22 @@ public class MoveBehaviour : MonoBehaviour
             }
 
             Vector3 targetVelocity = moveDir * currentSpeed;
+
+            float yVel = _rb.linearVelocity.y;
+            if (GetComponent<JumpBehaviour>().IsGrounded() && yVel < 0)
+            {
+                yVel = 0; 
+            }
             _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
         }
         else
         {
             // Si no hi ha input, el personatge es manté en la seva rotació
+            float yVel = _rb.linearVelocity.y;
+            if (GetComponent<JumpBehaviour>().IsGrounded() && yVel < 0)
+            {
+                yVel = 0;
+            }
             _rb.linearVelocity = new Vector3(0f, _rb.linearVelocity.y, 0f);
         }
     }
