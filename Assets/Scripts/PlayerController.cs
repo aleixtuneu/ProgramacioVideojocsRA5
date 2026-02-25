@@ -57,6 +57,14 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
                 // Si el temporitzador ha acabat
                 _animator.SetBool("IsGrounded", _jb.IsGrounded());
             }
+
+            // //
+            Transform meshTransform = _animator.transform;
+            if (meshTransform.localPosition.y != 0)
+            {
+                meshTransform.localPosition = new Vector3(0, 0, 0);
+            }
+            // //
         }
     }
 
@@ -158,6 +166,15 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
             // Nomes corre si hi ha moviment i no apunta
             bool canRun = sprinting && _mb.GetInputDirection().sqrMagnitude > 0.1f;
             _animator.SetBool("IsRunning", canRun);
+        }
+    }
+
+    // Atacar
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (!context.started && _animator != null)
+        {
+            _animator.SetTrigger("Attack");
         }
     }
 }
