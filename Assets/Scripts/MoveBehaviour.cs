@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class MoveBehaviour : MonoBehaviour
 {
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float runSpeed = 9f;
-    [SerializeField] private float turnSpeed = 15f;
+    [SerializeField] private float walkSpeed = 3.5f;
+    [SerializeField] private float runSpeed = 7f;
+    [SerializeField] private float turnSpeed = 10f;
 
     private Rigidbody _rb;
     private Vector2 _inputDirection;
@@ -25,7 +25,7 @@ public class MoveBehaviour : MonoBehaviour
         }
     }
 
-    // Obtenir direcció de moviment
+    // Obtenir direcciï¿½ de moviment
     public Vector2 GetInputDirection() => _inputDirection;
 
     public void SetInputDirection(Vector2 direction)
@@ -50,23 +50,26 @@ public class MoveBehaviour : MonoBehaviour
 
     private void Move()
     {
-        // Obtenir dirrecions de la càmera
+        // Resetejar velocitat de rotaciï¿½
+        _rb.angularVelocity = Vector3.zero;
+
+        // Obtenir dirrecions de la cï¿½mera
         Vector3 camForward = _cameraTransform.forward;
         Vector3 camRight = _cameraTransform.right;
 
-        // Ignorar si la càmera mira amunt o avall
+        // Ignorar si la cï¿½mera mira amunt o avall
         camForward.y = 0;
         camRight.y = 0;
         camForward.Normalize();
         camRight.Normalize();
 
-        // Calcular direcció de moviment
+        // Calcular direcciï¿½ de moviment
         Vector3 moveDir = (camForward * _inputDirection.y + camRight * _inputDirection.x).normalized;
 
-        // Determinar si camina o corre, si apunta només pot caminar
+        // Determinar si camina o corre, si apunta nomï¿½s pot caminar
         float currentSpeed = (_isSprinting && !_isAiming) ? runSpeed : walkSpeed;
 
-        // Si apunta, el personatge sempre mira on la càmera
+        // Si apunta, el personatge sempre mira on la cï¿½mera
         if (_isAiming)
         {
             Quaternion targetRotation = Quaternion.LookRotation(camForward);
@@ -75,7 +78,7 @@ public class MoveBehaviour : MonoBehaviour
 
         if (moveDir.sqrMagnitude >= 0.01f)
         {
-            // Si no apunta rotació normal
+            // Si no apunta rotaciï¿½ normal
             if (!_isAiming)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(moveDir);
@@ -83,17 +86,11 @@ public class MoveBehaviour : MonoBehaviour
             }
 
             Vector3 targetVelocity = moveDir * currentSpeed;
-
-            float yVel = _rb.linearVelocity.y;
-            if (GetComponent<JumpBehaviour>().IsGrounded() && yVel < 0)
-            {
-                yVel = 0; 
-            }
-            _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
+            _rb.linearVelocity = Vector3.Lerp(_rb.linearVelocity, new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z), 0.15f);
         }
         else
         {
-            // Si no hi ha input, el personatge es manté en la seva rotació
+            // Si no hi ha input, el personatge es mantï¿½ en la seva rotaciï¿½
             float yVel = _rb.linearVelocity.y;
             if (GetComponent<JumpBehaviour>().IsGrounded() && yVel < 0)
             {

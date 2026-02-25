@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
     [SerializeField] private GameObject _thirdPersonCamera;
     [SerializeField] protected GameObject _firstPersonCamera;
     private bool _isAiming;
+    public static bool keyCollected = false;
 
     private InputSystem_Actions _inputActions;
 
