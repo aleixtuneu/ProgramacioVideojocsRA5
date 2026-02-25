@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class MoveBehaviour : MonoBehaviour
 {
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float runSpeed = 9f;
-    [SerializeField] private float turnSpeed = 15f;
+    [SerializeField] private float walkSpeed = 3.5f;
+    [SerializeField] private float runSpeed = 7f;
+    [SerializeField] private float turnSpeed = 10f;
 
     private Rigidbody _rb;
     private Vector2 _inputDirection;
@@ -50,6 +50,9 @@ public class MoveBehaviour : MonoBehaviour
 
     private void Move()
     {
+        // Resetejar velocitat de rotació
+        _rb.angularVelocity = Vector3.zero;
+
         // Obtenir dirrecions de la càmera
         Vector3 camForward = _cameraTransform.forward;
         Vector3 camRight = _cameraTransform.right;
@@ -83,7 +86,8 @@ public class MoveBehaviour : MonoBehaviour
             }
 
             Vector3 targetVelocity = moveDir * currentSpeed;
-            _rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
+            //_rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
+            _rb.linearVelocity = Vector3.Lerp(_rb.linearVelocity, new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z), 0.15f);
         }
         else
         {
