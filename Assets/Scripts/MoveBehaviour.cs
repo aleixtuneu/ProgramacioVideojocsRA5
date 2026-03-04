@@ -25,7 +25,7 @@ public class MoveBehaviour : MonoBehaviour
         }
     }
 
-    // Obtenir direcciï¿½ de moviment
+    // Obtenir direcció de moviment
     public Vector2 GetInputDirection() => _inputDirection;
 
     public void SetInputDirection(Vector2 direction)
@@ -50,26 +50,26 @@ public class MoveBehaviour : MonoBehaviour
 
     private void Move()
     {
-        // Resetejar velocitat de rotaciï¿½
+        // Resetejar velocitat de rotació
         _rb.angularVelocity = Vector3.zero;
 
-        // Obtenir dirrecions de la cï¿½mera
+        // Obtenir dirrecions de la càmera
         Vector3 camForward = _cameraTransform.forward;
         Vector3 camRight = _cameraTransform.right;
 
-        // Ignorar si la cï¿½mera mira amunt o avall
+        // Ignorar si la càmera mira amunt o avall
         camForward.y = 0;
         camRight.y = 0;
         camForward.Normalize();
         camRight.Normalize();
 
-        // Calcular direcciï¿½ de moviment
+        // Calcular direcció de moviment
         Vector3 moveDir = (camForward * _inputDirection.y + camRight * _inputDirection.x).normalized;
 
-        // Determinar si camina o corre, si apunta nomï¿½s pot caminar
+        // Determinar si camina o corre, si apunta només pot caminar
         float currentSpeed = (_isSprinting && !_isAiming) ? runSpeed : walkSpeed;
 
-        // Si apunta, el personatge sempre mira on la cï¿½mera
+        // Si apunta, el personatge sempre mira on la càmera
         if (_isAiming)
         {
             Quaternion targetRotation = Quaternion.LookRotation(camForward);
@@ -78,7 +78,7 @@ public class MoveBehaviour : MonoBehaviour
 
         if (moveDir.sqrMagnitude >= 0.01f)
         {
-            // Si no apunta rotaciï¿½ normal
+            // Si no apunta rotació normal
             if (!_isAiming)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(moveDir);
@@ -86,16 +86,12 @@ public class MoveBehaviour : MonoBehaviour
             }
 
             Vector3 targetVelocity = moveDir * currentSpeed;
+            //_rb.linearVelocity = new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z);
             _rb.linearVelocity = Vector3.Lerp(_rb.linearVelocity, new Vector3(targetVelocity.x, _rb.linearVelocity.y, targetVelocity.z), 0.15f);
         }
         else
         {
-            // Si no hi ha input, el personatge es mantï¿½ en la seva rotaciï¿½
-            float yVel = _rb.linearVelocity.y;
-            if (GetComponent<JumpBehaviour>().IsGrounded() && yVel < 0)
-            {
-                yVel = 0;
-            }
+            // Si no hi ha input, el personatge es manté en la seva rotació
             _rb.linearVelocity = new Vector3(0f, _rb.linearVelocity.y, 0f);
         }
     }
