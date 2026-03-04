@@ -9,11 +9,20 @@ public class Key : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            Debug.Log("És el Player! Clau recollegida!");
+            Debug.Log("És el Player! Clau recollida!");
 
-            PlayerController.keyCollected = true;
-            Destroy(gameObject); // Destruir la clau del mapa
-            Debug.Log("Clau recollida!");
+            if (GameManager.Instance != null)
+            {
+                Debug.Log("GameManager trobat!");
+                // GameManager per recollir la clau
+                GameManager.Instance.CollectKey(gameObject);
+            }
+            else
+            {
+                Debug.LogError("ERROR: GameManager NO ha estat trobat a la escena!");
+                // Destruir la clau de totes maneres
+                Destroy(gameObject);
+            }
         }
         else
         {

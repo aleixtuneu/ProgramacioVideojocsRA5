@@ -8,11 +8,14 @@ public class Door : MonoBehaviour
     {
         Debug.Log("Collisió detectada amb: " + other.gameObject.name);
         Debug.Log("Tag: " + other.tag);
-        Debug.Log("Clau recollida: " + PlayerController.keyCollected);
 
         if (other.CompareTag("Player") && !open_door)
         {
-            if (PlayerController.keyCollected)
+            Debug.Log("GameManager trobat!");
+            Debug.Log($"Estat clau: {GameManager.Instance.IsKeyCollected}");
+
+            // GameManager per intentar obrir la porta
+            if (GameManager.Instance.TryOpenDoor())
             {
                 OpenDoor();
             }
@@ -20,6 +23,11 @@ public class Door : MonoBehaviour
             {
                 Debug.Log("No tens la clau!");
             }
+        }
+        else
+        {
+            Debug.LogError("ERROR: GameManager NO ha estat trobat a la escena!");
+            Debug.LogError("Assegura't que hi ha un GameObject amb el component GameManager!");
         }
     }
 

@@ -160,4 +160,10 @@ public class PlayerController : MonoBehaviour, InputSystem_Actions.IPlayerAction
             _animator.SetBool("IsRunning", canRun);
         }
     }
+
+    // Obtenir si el jugador té la clau recollida
+    public bool HasKey()
+    {
+        return GameManager.Instance.IsKeyCollected;
+    }
 }
